@@ -1,0 +1,23 @@
+{
+  "name": "task-automation",
+  "version": "0.0.1",
+  "description": "A simple task automation app",
+  "main": "index.js",
+  "scripts": {
+    "test": "start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Its-manpreet/task-automation.git"
+  },
+  "keywords": [
+    "task",
+    "automation"
+  ],
+  "author": "Manpreet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Its-manpreet/task-automation/issues"
+  },
+  "homepage": "https://github.com/Its-manpreet/task-automation#readme"
+}
