@@ -1,7 +1,6 @@
 //Import the libraries
 const fs = require('node:fs')
 const emmiter = require('node:events')
-const readline = require('node:readline')
 //declare emmiter for letting scripts know when event occured
 const run = new emmiter()
 //get the files of the folders
@@ -21,28 +20,33 @@ eventsdir.forEach((eventfile) => {
 })
 //check scripts
 scriptdir.forEach((scriptfile) => {
-    //only files with .tas
-    if(scriptfile.endsWith('.tas')){
+    //only files with .js
+    if(scriptfile.endsWith('.js')){
         const scriptfilepath = `./data/scripts/${scriptfile}`
         //get lines
-        lines = getlines(scriptfilepath)
+        const firstlines = getlines(scriptfilepath)
         //on event specified in line 1
-        run.on(lines[0],() =>{
-            console.log('working')
-        })
-        }
-})
-
-
-//load functions
-funcdir.forEach((funcfile) => {
-    if(funcfile.endsWith('.js')){
-        const func = require(`./data/plugins/func/${funcfile}`)
-        run.on('run',() => {
-            // func('hi')
+        run.on(firstlines[0],() =>{
+            // console.log('working')
+            const fileContent = fs.readFileSync(scriptfilepath, 'utf-8');
+            const lines = fileContent.substr(fileContent.indexOf('\r\n'),fileContent.length)
+            //load functions
+            funcdir.forEach((funcfile) => {
+                if(funcfile.endsWith('.js')){
+                    const funcpath = `./data/plugins/func/${funcfile}`
+                    const funcname = funcfile.slice(0,funcfile.length - 3)
+                    const funcjsarr = funcdir.filter( ( elm ) => elm.match(/.*\.(js?)/ig));
+                    fs.writeFileSync(`temp/${scriptfile}`, `const {${funcname}} = require('${funcpath}')\n`, { flag: 'a' })
+                }
+            })
+            fs.writeFileSync(`temp/${scriptfile}`, `${lines}\n`, { flag: 'a' })
+            const script = fs.readFileSync(`temp/${scriptfile}`, 'utf-8')
+            eval(script)
+            fs.unlinkSync(`temp/${scriptfile}`)
         })
     }
 })
+
 //functions
 //get lines from a file
 function getlines(path) {
@@ -50,4 +54,3 @@ function getlines(path) {
     const lines = fileContent.split('\r\n');
     return lines
 }
-   

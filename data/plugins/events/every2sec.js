@@ -3,7 +3,7 @@ const cron = require('node-cron')
 
 const event = new emmiter()
 
-cron.schedule('* * * * * *', () => {
+cron.schedule('*/2 * * * * *', () => {
     event.emit('run')
   });
 
