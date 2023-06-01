@@ -24,10 +24,9 @@ scriptdir.forEach((scriptfile) => {
     if(scriptfile.endsWith('.js')){
         const scriptfilepath = `./data/scripts/${scriptfile}`
         //get lines
-        const firstlines = getlines(scriptfilepath)
+        const firstline = getlines(scriptfilepath)[0]
         //on event specified in line 1
-        run.on(firstlines[0],() =>{
-            // console.log('working')
+        run.on(firstline,() =>{
             const fileContent = fs.readFileSync(scriptfilepath, 'utf-8');
             const lines = fileContent.substr(fileContent.indexOf('\r\n'),fileContent.length)
             //load functions
@@ -35,13 +34,17 @@ scriptdir.forEach((scriptfile) => {
                 if(funcfile.endsWith('.js')){
                     const funcpath = `./data/plugins/func/${funcfile}`
                     const funcname = funcfile.slice(0,funcfile.length - 3)
-                    const funcjsarr = funcdir.filter( ( elm ) => elm.match(/.*\.(js?)/ig));
                     fs.writeFileSync(`temp/${scriptfile}`, `const {${funcname}} = require('${funcpath}')\n`, { flag: 'a' })
                 }
             })
             fs.writeFileSync(`temp/${scriptfile}`, `${lines}\n`, { flag: 'a' })
             const script = fs.readFileSync(`temp/${scriptfile}`, 'utf-8')
-            eval(script)
+            // console.log(script)
+            try {
+                eval(script)
+            } catch (error) {
+                console.log(error)
+            }
             fs.unlinkSync(`temp/${scriptfile}`)
         })
     }
